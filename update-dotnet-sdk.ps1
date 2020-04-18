@@ -296,6 +296,7 @@ else {
     }
     catch {
         Say "Failed to open Pull Request"
+        Write-Host $_.Exception | Format-List -Force
         throw
     }
 }
