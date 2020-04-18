@@ -240,6 +240,12 @@ if ($DryRun) {
 else {
 
     $Base = (git rev-parse --abbrev-ref HEAD | Out-String).Trim()
+    $BranchExists = (git rev-parse --verify --quiet $BranchName | Out-String).Trim()
+
+    if ($BranchExists) {
+        Say "The $BranchName branch already exists"
+        return
+    }
 
     try {
         git checkout -b $BranchName | Out-Null
