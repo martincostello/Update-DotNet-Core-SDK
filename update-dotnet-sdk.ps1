@@ -222,7 +222,7 @@ else {
     git remote set-url origin https://github.com/$env:GITHUB_REPOSITORY.git | Out-Null
 
     try {
-        git fetch origin
+        git fetch origin | Out-Null
     }
     catch {
         # HACK - It worked, ignore exit code 1
