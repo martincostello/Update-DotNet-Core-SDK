@@ -1,5 +1,6 @@
 #! /usr/bin/pwsh
 param(
+    [Parameter(Mandatory = $true)][string] $GitHubToken,
     [Parameter(Mandatory = $false)][string] $Channel = "3.1",
     [Parameter(Mandatory = $false)][string] $GlobalJsonFile = "./global.json",
     [Parameter(Mandatory = $false)][string] $UserName = "",
