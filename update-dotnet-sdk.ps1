@@ -196,13 +196,13 @@ if ($DryRun) {
 }
 else {
 
-    git checkout -b $BranchName
+    git checkout -b $BranchName | Out-Null
     Say-Verbose "Created git branch $BranchName"
 
-    git add $GlobalJsonFile
+    git add $GlobalJsonFile | Out-Null
     Say-Verbose "Staged git commit for '$GlobalJsonFile'"
 
-    git commit -m $CommitMessage
+    git commit -m $CommitMessage | Out-Null
     $GitSha = (git log --format="%H" -n 1 | Out-String).Substring(0, 7)
 
     Say "Commited .NET SDK update to git ($GitSha)"
