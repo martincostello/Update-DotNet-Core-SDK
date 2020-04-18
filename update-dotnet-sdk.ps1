@@ -241,7 +241,7 @@ else {
 
     $Base = (git rev-parse --abbrev-ref HEAD | Out-String)
 
-    git checkout -b $BranchName | Out-Null
+    git checkout -b $BranchName
     Say-Verbose "Created git branch $BranchName"
 
     git add $GlobalJsonFile | Out-Null
