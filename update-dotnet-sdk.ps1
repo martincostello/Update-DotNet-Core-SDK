@@ -11,14 +11,14 @@ param(
     [Parameter(Mandatory = $false)][switch] $DryRun
 )
 
-function Get-Global-Json-Version([string]$FileName) {
+function Get-Global-Json-Version([string] $FileName) {
 
     if (-Not (Test-Path $FileName)) {
         throw "Unable to find '$FileName'"
     }
 
     try {
-        $JsonContent = Get-Json-From-File $FileName | Select-Object -expand "sdk" -ErrorAction SilentlyContinue
+        $JsonContent = Get-Json-From-File $FileName | Select-Object -Expand "sdk" -ErrorAction SilentlyContinue
     }
     catch {
         throw "JSON file unreadable: '$FileName'"
@@ -53,7 +53,7 @@ function Get-Global-Json-Version([string]$FileName) {
     return $Version
 }
 
-function Get-Latest-SDK-Version([string]$FileName) {
+function Get-Latest-SDK-Version([string] $FileName) {
 
     if (-Not (Test-Path $FileName)) {
         throw "Unable to find '$FileName'"
@@ -90,6 +90,47 @@ function Get-Latest-SDK-Version([string]$FileName) {
 
     if ($null -eq $Version) {
         throw "Unable to find the latest-sdk node in '$FileName'"
+    }
+
+    return $Version
+}
+
+function Get-Latest-Runtime-Version([string] $FileName, [string] $SdkVersion) {
+
+    if (-Not (Test-Path $FileName)) {
+        throw "Unable to find '$FileName'"
+    }
+
+    try {
+        $JsonContent = Get-Json-From-File $FileName | Select-Object -Expand "releases" -ErrorAction SilentlyContinue
+    }
+    catch {
+        throw "JSON file unreadable: '$FileName'"
+    }
+
+    $Version = $null
+
+    if ($JsonContent) {
+
+        Say-Verbose "JSON: $JsonContent"
+
+        try {
+            $JsonContent | ForEach-Object {
+                if ($_.sdk.version -eq $SdkVersion) {
+                    $Version = $_.sdk."runtime-version"
+                }
+            }
+        }
+        catch {
+            throw "Unable to parse the releases node in '$FileName'"
+        }
+    }
+    else {
+        throw "Unable to find the releases node in '$FileName'"
+    }
+
+    if ($null -eq $Version) {
+        throw "Unable to find the releases node in '$FileName' for SDK version $SdkVersion"
     }
 
     return $Version
@@ -141,8 +182,9 @@ finally {
 }
 
 $LatestSDKVersion = Get-Latest-SDK-Version $ReleaseNotesPath
+$LatestRuntimeVersion = Get-Latest-Runtime-Version $ReleaseNotesPath $LatestSDKVersion
 
-Say "Latest .NET SDK version for channel '$Channel' is $LatestSDKVersion"
+Say "Latest .NET SDK version for channel '$Channel' is $LatestSDKVersion (runtime version $LatestRuntimeVersion)"
 
 if ($CurrentSDKVersion -ge $LatestSDKVersion) {
     Say "The .NET SDK version specified by '$GlobalJsonFile' is up-to-date"
@@ -197,6 +239,8 @@ if ($DryRun) {
 }
 else {
 
+    $Base = (git rev-parse --abbrev-ref HEAD | Out-String)
+
     git checkout -b $BranchName | Out-Null
     Say-Verbose "Created git branch $BranchName"
 
@@ -207,4 +251,37 @@ else {
     $GitSha = (git log --format="%H" -n 1 | Out-String).Substring(0, 7)
 
     Say "Commited .NET SDK update to git ($GitSha)"
+
+    git push
+    Say "Pushed changes to repository $env:GITHUB_REPOSITORY"
+
+    $PullRequestUri = "https://api.github.com/repos/$env:GITHUB_REPOSITORY/pulls"
+
+    $Headers = @{
+        "Accept"        = "application/vnd.github.v3+json";
+        "Authorization" = "token $GitHubToken";
+        "User-Agent"    = "update-dotnet-sdk.ps1";
+    }
+
+    $Body = @{
+        "title"                 = "Update .NET SDK to $LatestSDKVersion";
+        "head"                  = $BranchName;
+        "base"                  = $Head;
+        "body"                  = "Updates the .NET SDK to version [``$LatestSDKVersion``](https://github.com/dotnet/core/blob/master/release-notes/$Channel/$LatestRuntimeVersion/$LatestSDKVersion-download.md).";
+        "maintainer_can_modify" = $true;
+        "draft"                 = $false;
+    } | ConvertTo-Json
+
+    try {
+        Invoke-RestMethod `
+            -Uri $PullRequestUri `
+            -Method POST `
+            -ContentType "application/json" `
+            -Headers $Headers `
+            -Body $Body
+    }
+    catch {
+        Say "Failed to open Pull Request"
+        throw
+    }
 }
