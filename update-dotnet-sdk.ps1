@@ -239,6 +239,8 @@ if ($DryRun) {
 }
 else {
 
+    git remote set-url origin https://github.com/$env:GITHUB_REPOSITORY.git | Out-Null
+
     $Base = (git rev-parse --abbrev-ref HEAD | Out-String).Trim()
     $BranchExists = (git rev-parse --verify --quiet $BranchName | Out-String).Trim()
 
@@ -263,8 +265,6 @@ else {
     $GitSha = (git log --format="%H" -n 1 | Out-String).Substring(0, 7)
 
     Say "Commited .NET SDK update to git ($GitSha)"
-
-    git remote set-url origin https://github.com/$env:GITHUB_REPOSITORY.git | Out-Null
 
     try {
         git push -u origin $BranchName | Out-Null
