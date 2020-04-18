@@ -239,7 +239,7 @@ if ($DryRun) {
 }
 else {
 
-    $Base = (git rev-parse --abbrev-ref HEAD | Out-String)
+    $Head = (git rev-parse --abbrev-ref HEAD | Out-String)
 
     git checkout -b $BranchName
     Say-Verbose "Created git branch $BranchName"
