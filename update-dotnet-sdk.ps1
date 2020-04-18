@@ -245,6 +245,7 @@ else {
         git checkout -b $BranchName | Out-Null
     }
     catch {
+        # HACK - It worked, ignore exit code 1
     }
 
     Say-Verbose "Created git branch $BranchName"
@@ -258,7 +259,14 @@ else {
     Say "Commited .NET SDK update to git ($GitSha)"
 
     git remote set-url origin https://github.com/$env:GITHUB_REPOSITORY.git | Out-Null
-    git push -u origin $BranchName | Out-Null
+
+    try {
+        git push -u origin $BranchName | Out-Null
+    }
+    catch {
+        # HACK - It worked, ignore exit code 1
+    }
+
     Say "Pushed changes to repository $env:GITHUB_REPOSITORY"
 
     $PullRequestUri = "https://api.github.com/repos/$env:GITHUB_REPOSITORY/pulls"
