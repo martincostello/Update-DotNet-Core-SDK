@@ -239,7 +239,7 @@ if ($DryRun) {
 }
 else {
 
-    $Head = (git rev-parse --abbrev-ref HEAD | Out-String)
+    $Base = (git rev-parse --abbrev-ref HEAD | Out-String).Trim()
 
     try {
         git checkout -b $BranchName | Out-Null
@@ -280,7 +280,7 @@ else {
     $Body = @{
         "title"                 = "Update .NET SDK to $LatestSDKVersion";
         "head"                  = $BranchName;
-        "base"                  = $Head;
+        "base"                  = $Base;
         "body"                  = "Updates the .NET SDK to version [``$LatestSDKVersion``](https://github.com/dotnet/core/blob/master/release-notes/$Channel/$LatestRuntimeVersion/$LatestSDKVersion-download.md).";
         "maintainer_can_modify" = $true;
         "draft"                 = $false;
