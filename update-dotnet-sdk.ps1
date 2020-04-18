@@ -257,6 +257,7 @@ else {
 
     Say "Commited .NET SDK update to git ($GitSha)"
 
+    git remote set-url origin https://github.com/$env:GITHUB_REPOSITORY.git
     git push
     Say "Pushed changes to repository $env:GITHUB_REPOSITORY"
 
