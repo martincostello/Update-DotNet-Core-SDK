@@ -308,6 +308,6 @@ else {
         throw
     }
 
-    Say "Created pull request #``$PullRequest.number``: ``$PullRequest.title``"
-    Say "View the pull request at ``$PullRequest.html_url``"
+    Say "Created pull request #$($PullRequest.number): $($PullRequest.title)"
+    Say "View the pull request at $($PullRequest.html_url)"
 }
