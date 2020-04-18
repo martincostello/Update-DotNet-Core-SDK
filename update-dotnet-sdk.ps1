@@ -296,7 +296,7 @@ else {
     }
     catch {
         Say "Failed to open Pull Request"
-        $Error | Get-Error
+        $_.Exception | Get-Error
         throw
     }
 }
