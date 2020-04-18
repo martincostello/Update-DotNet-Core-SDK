@@ -286,6 +286,8 @@ else {
         "draft"                 = $false;
     } | ConvertTo-Json
 
+    Say-Verbose "Pull Request: $Body"
+
     try {
         Invoke-RestMethod `
             -Uri $PullRequestUri `
