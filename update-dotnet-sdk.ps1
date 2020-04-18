@@ -204,26 +204,6 @@ else {
     Say "Updated SDK version in '$GlobalJsonFile' to $LatestSDKVersion"
 }
 
-if ($UserName) {
-    if ($DryRun) {
-        Say "Skipped update of git user name to '$UserName'"
-    }
-    else {
-        git config user.name $UserName
-        Say "Updated git user name to '$UserName'"
-    }
-}
-
-if ($UserEmail) {
-    if ($DryRun) {
-        Say "Skipped update of git user email to '$UserEmail'"
-    }
-    else {
-        git config user.email $UserEmail
-        Say "Updated git user email to '$UserEmail'"
-    }
-}
-
 if (-Not $BranchName) {
     $BranchName = "update-dotnet-sdk-$LatestSDKVersion".ToLowerInvariant()
 }
@@ -254,6 +234,26 @@ else {
     if ($BranchExists) {
         Say "The $BranchName branch already exists"
         return
+    }
+
+    if ($UserName) {
+        if ($DryRun) {
+            Say "Skipped update of git user name to '$UserName'"
+        }
+        else {
+            git config user.name $UserName
+            Say "Updated git user name to '$UserName'"
+        }
+    }
+
+    if ($UserEmail) {
+        if ($DryRun) {
+            Say "Skipped update of git user email to '$UserEmail'"
+        }
+        else {
+            git config user.email $UserEmail
+            Say "Updated git user email to '$UserEmail'"
+        }
     }
 
     try {
