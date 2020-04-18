@@ -240,7 +240,13 @@ if ($DryRun) {
 else {
 
     git remote set-url origin https://github.com/$env:GITHUB_REPOSITORY.git | Out-Null
-    git fetch origin
+
+    try {
+        git fetch origin
+    }
+    catch {
+        # HACK - It worked, ignore exit code 1
+    }
 
     $Base = (git rev-parse --abbrev-ref HEAD | Out-String).Trim()
     $BranchExists = (git rev-parse --verify --quiet $BranchName | Out-String).Trim()
