@@ -258,7 +258,7 @@ else {
     Say "Commited .NET SDK update to git ($GitSha)"
 
     git remote set-url origin https://github.com/$env:GITHUB_REPOSITORY.git
-    git push
+    git push -u origin $BranchName
     Say "Pushed changes to repository $env:GITHUB_REPOSITORY"
 
     $PullRequestUri = "https://api.github.com/repos/$env:GITHUB_REPOSITORY/pulls"
