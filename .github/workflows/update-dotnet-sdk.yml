@@ -1,6 +1,8 @@
 name: update-dotnet-sdk
 
 on:
+  push:
+    branches: [ master ]
   schedule:
     - cron:  '*/15 * * * *'
 
