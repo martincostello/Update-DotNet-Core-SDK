@@ -295,7 +295,7 @@ else {
     Say-Verbose "Pull Request: $Body"
 
     try {
-        Invoke-RestMethod `
+        $PullRequest = Invoke-RestMethod `
             -Uri $PullRequestUri `
             -Method POST `
             -ContentType "application/json" `
@@ -307,4 +307,7 @@ else {
         $_.Exception | Get-Error
         throw
     }
+
+    Say "Created pull request #``$PullRequest.number``: ``$PullRequest.title``"
+    Say "View the pull request at ``$PullRequest.html_url``"
 }
