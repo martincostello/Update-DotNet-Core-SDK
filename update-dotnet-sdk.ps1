@@ -149,7 +149,20 @@ function Get-Latest-Runtime-Version([string] $FileName, [string] $SdkVersion, [b
             }
         }
         catch {
-            throw "Unable to parse the releases node in '$FileName'"
+            throw "Unable to parse the releases sdk node in '$FileName'"
+        }
+
+        if ($null -eq $Version) {
+            try {
+                $JsonContent | ForEach-Object {
+                    if ($_.sdks.version -eq $SdkVersion) {
+                        $Version = $_.sdks."runtime-version"
+                    }
+                }
+            }
+            catch {
+                throw "Unable to parse the releases sdks node in '$FileName'"
+            }
         }
     }
     else {
