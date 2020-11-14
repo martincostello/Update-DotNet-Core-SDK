@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     name: Update .NET SDK
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
 
