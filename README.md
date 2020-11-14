@@ -1,5 +1,7 @@
 # Update .NET SDK PowerShell Script for GitHub Actions
 
+> ⚠️ This repository is deprecated. Please use the [`martincostello/update-dotnet-sdk`](https://github.com/martincostello/update-dotnet-sdk) action instead.
+
 This repository contains a PowerShell script that can be used to automate
 updates to the .NET SDK version specified in a `global.json` file.
 
