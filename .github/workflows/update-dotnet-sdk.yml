@@ -5,6 +5,7 @@ on:
     branches: [ main ]
   schedule:
     - cron:  '*/15 * * * *'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -17,5 +18,8 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Update .NET SDK
-      shell: pwsh
-      run: ./update-dotnet-sdk.ps1 -GitHubToken ${{ secrets.GITHUB_TOKEN }} -Channel "3.1" -UserName "martincostello" -UserEmail "martin@martincostello.com" -Verbose
+      uses: martincostello/update-dotnet-sdk@main
+      with:
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        user-email: martin@martincostello.com
+        user-name: martincostello
